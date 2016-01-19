@@ -8,16 +8,20 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
 public class ProfileTest {
-    private static Question question;
-    private static Criterion criterion;
+    private static Question importantQuestion;
+    private static Criterion importantCriterion;
+    private static Question dontCareQuestion;
+    private static Criterion dontCareCriterion;
 
     private Criteria criteria;
     private Profile profile;
 
     @BeforeClass
     public static void beforeClass() {
-        question = new BooleanQuestion(1, "Are you a girl?");
-        criterion = new Criterion(new Answer(question, 0), Weight.Important);
+        importantQuestion = new BooleanQuestion(1, "Are you important?");
+        importantCriterion = new Criterion(new Answer(importantQuestion, 1), Weight.Important);
+        dontCareQuestion = new BooleanQuestion(1, "Are you dontCare?");
+        dontCareCriterion = new Criterion(new Answer(importantQuestion, 1), Weight.DontCare);
     }
 
     @Before
@@ -28,8 +32,8 @@ public class ProfileTest {
 
     @Test
     public void should_return_1000_score_and_true_matches_when_answer_one_important_question_correctly() {
-        criteria.add(criterion);
-        profile.add(new Answer(question, 0));
+        criteria.add(importantCriterion);
+        profile.add(new Answer(importantQuestion, 1));
 
         assertThat(profile.matches(criteria), is(true));
         assertThat(profile.score(), is(1000));
@@ -37,10 +41,28 @@ public class ProfileTest {
 
     @Test
     public void should_return_0_score_and_false_matches_when_answer_one_important_question_wrongly() {
-        criteria.add(criterion);
-        profile.add(new Answer(question, 1));
+        criteria.add(importantCriterion);
+        profile.add(new Answer(importantQuestion, 0));
 
         assertThat(profile.matches(criteria), is(false));
+        assertThat(profile.score(), is(0));
+    }
+
+    @Test
+    public void should_return_0_score_and_true_matches_when_answer_one_dont_care_question_correctly() {
+        criteria.add(dontCareCriterion);
+        profile.add(new Answer(dontCareQuestion, 1));
+
+        assertThat(profile.matches(criteria), is(true));
+        assertThat(profile.score(), is(0));
+    }
+
+    @Test
+    public void should_return_0_score_and_true_matches_when_answer_dont_care_question_wrongly() {
+        criteria.add(dontCareCriterion);
+        profile.add(new Answer(dontCareQuestion, 0));
+
+        assertThat(profile.matches(criteria), is(true));
         assertThat(profile.score(), is(0));
     }
 }
