@@ -89,4 +89,48 @@ public class ProfileTest {
         assertThat(profile.matches(criteria), is(false));
         assertThat(profile.score(), is(0));
     }
+
+    @Test
+    public void should_return_max_integer_plus_1000_score_and_true_matches_when_answer_one_must_match_question_correctly_and_one_important_question_correctly() {
+        criteria.add(mustMatchCriterion);
+        criteria.add(importantCriterion);
+        profile.add(new Answer(mustMatchCareQuestion, 1));
+        profile.add(new Answer(importantQuestion, 1));
+
+        assertThat(profile.matches(criteria), is(true));
+        assertThat(profile.score(), is(Integer.MAX_VALUE + 1000));
+    }
+
+    @Test
+    public void should_return_1000_score_and_true_matches_when_answer_one_must_match_question_wrongly_and_one_important_question_correctly() {
+        criteria.add(mustMatchCriterion);
+        criteria.add(importantCriterion);
+        profile.add(new Answer(mustMatchCareQuestion, 0));
+        profile.add(new Answer(importantQuestion, 1));
+
+        assertThat(profile.matches(criteria), is(false));
+        assertThat(profile.score(), is(1000));
+    }
+
+    @Test
+    public void should_return_0_score_and_true_matches_when_answer_one_must_match_question_wrongly_and_one_important_question_wrongly() {
+        criteria.add(mustMatchCriterion);
+        criteria.add(importantCriterion);
+        profile.add(new Answer(mustMatchCareQuestion, 0));
+        profile.add(new Answer(importantQuestion, 0));
+
+        assertThat(profile.matches(criteria), is(false));
+        assertThat(profile.score(), is(0));
+    }
+
+    @Test
+    public void should_return_0_score_and_true_matches_when_answer_one_must_match_question_correctly_and_one_important_question_wrongly() {
+        criteria.add(mustMatchCriterion);
+        criteria.add(importantCriterion);
+        profile.add(new Answer(mustMatchCareQuestion, 1));
+        profile.add(new Answer(importantQuestion, 0));
+
+        assertThat(profile.matches(criteria), is(true));
+        assertThat(profile.score(), is(Integer.MAX_VALUE));
+    }
 }
