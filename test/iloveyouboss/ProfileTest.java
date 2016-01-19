@@ -23,10 +23,10 @@ public class ProfileTest {
         importantQuestion = new BooleanQuestion(1, "Are you important?");
         importantCriterion = new Criterion(new Answer(importantQuestion, 1), Weight.Important);
 
-        dontCareQuestion = new BooleanQuestion(1, "Are you dontCare?");
+        dontCareQuestion = new BooleanQuestion(2, "Are you dontCare?");
         dontCareCriterion = new Criterion(new Answer(dontCareQuestion, 1), Weight.DontCare);
 
-        mustMatchCareQuestion = new BooleanQuestion(1, "Are you mustMatch?");
+        mustMatchCareQuestion = new BooleanQuestion(3, "Are you mustMatch?");
         mustMatchCriterion = new Criterion(new Answer(mustMatchCareQuestion, 1), Weight.MustMatch);
     }
 
