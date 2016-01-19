@@ -12,6 +12,8 @@ public class ProfileTest {
     private static Criterion importantCriterion;
     private static Question dontCareQuestion;
     private static Criterion dontCareCriterion;
+    private static Question mustMatchCareQuestion;
+    private static Criterion mustMatchCriterion;
 
     private Criteria criteria;
     private Profile profile;
@@ -20,8 +22,12 @@ public class ProfileTest {
     public static void beforeClass() {
         importantQuestion = new BooleanQuestion(1, "Are you important?");
         importantCriterion = new Criterion(new Answer(importantQuestion, 1), Weight.Important);
+
         dontCareQuestion = new BooleanQuestion(1, "Are you dontCare?");
-        dontCareCriterion = new Criterion(new Answer(importantQuestion, 1), Weight.DontCare);
+        dontCareCriterion = new Criterion(new Answer(dontCareQuestion, 1), Weight.DontCare);
+
+        mustMatchCareQuestion = new BooleanQuestion(1, "Are you mustMatch?");
+        mustMatchCriterion = new Criterion(new Answer(mustMatchCareQuestion, 1), Weight.MustMatch);
     }
 
     @Before
@@ -63,6 +69,24 @@ public class ProfileTest {
         profile.add(new Answer(dontCareQuestion, 0));
 
         assertThat(profile.matches(criteria), is(true));
+        assertThat(profile.score(), is(0));
+    }
+
+    @Test
+    public void should_return_max_integer_score_and_true_matches_when_answer_one_must_match_question_correctly() {
+        criteria.add(mustMatchCriterion);
+        profile.add(new Answer(mustMatchCareQuestion, 1));
+
+        assertThat(profile.matches(criteria), is(true));
+        assertThat(profile.score(), is(Integer.MAX_VALUE));
+    }
+
+    @Test
+    public void should_return_0_score_and_false_matches_when_answer_one_must_match_question_wrongly() {
+        criteria.add(mustMatchCriterion);
+        profile.add(new Answer(mustMatchCareQuestion, 0));
+
+        assertThat(profile.matches(criteria), is(false));
         assertThat(profile.score(), is(0));
     }
 }
